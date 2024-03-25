@@ -23,4 +23,6 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 
 COPY conf/wp-config-cli.sh wp-config-cli.sh
 
+COPY .env .env
+
 ENTRYPOINT ["bash", "wp-config-cli.sh"]
