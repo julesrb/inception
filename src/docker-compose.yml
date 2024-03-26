@@ -55,7 +55,7 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/Home/jelly/wordpress' # Adjust this path accordingly
+      device: '/home/jelly/wordpress' # Adjust this path accordingly
 
   mariadb:
     driver: local

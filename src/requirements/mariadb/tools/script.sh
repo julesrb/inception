@@ -1,32 +1,39 @@
 set -a
 source .env
 set +a
-service mysql start;
+service mysql start
 
-# create a database (if the database does not exist)
-echo "1"
-mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;"
-sleep 2
 
-# create an user with a password (if the user does not exist)
-echo "2"
-mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';"
-sleep 2
-# give all privileges to the user
-echo "3"
-mysql -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';"
-sleep 2
-#modify sql database
-echo "4"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';"
-sleep 2
-#reload the database
-echo "5"
-sleep 2
-#shutdown
-echo "6"
-mysqladmin -u root -p$SQL_ROOT_PASSWORD shutdown
-sleep 2
-#use exec to 
-echo "7"
-#exec mysqld_safe
+echo "-1 check if databse exist"
+mysql -uroot -p$SQL_ROOT_PASSWORD -e "use \`${SQL_DATABASE}\`;"
+result=$?
+if [[ $result -eq 0 ]]
+
+then
+	echo "-2 databse exist already"
+	echo "-3 shut down"
+	mysqladmin -uroot -p$SQL_ROOT_PASSWORD shutdown
+	echo "-4 exit bash and start mysql in safe mode with PID 1"
+	exec mysqld_safe
+else
+	echo "-2 create new database"
+	mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;"
+	sleep 1
+	echo "-3 set root password"
+	mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';"
+	sleep 1
+	echo "-4 new local user "
+	mysql -uroot -p$SQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';"
+	sleep 1
+	echo "-5 new remote user"
+	mysql -uroot -p$SQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';"
+	sleep 1
+	echo "-6 refresh grant table"
+	mysql -uroot -p$SQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+	sleep 1
+	echo "-7 shut down"
+	mysqladmin -uroot -p$SQL_ROOT_PASSWORD shutdown
+	sleep 1
+	echo "-8 exit bash and start mysql in safe mode with PID 1"
+	exec mysqld_safe
+fi
