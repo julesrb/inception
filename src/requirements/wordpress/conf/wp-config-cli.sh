@@ -1,6 +1,5 @@
 sleep 12
 set -a
-source .env
 set +a
 echo "--------"
 cd var/
