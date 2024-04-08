@@ -1,8 +1,8 @@
-FROM debian:buster
+FROM debian:bullseye
 
-RUN apt update && apt upgrade && apt-get install wget -y
+RUN apt update -y && apt upgrade -y && apt-get install wget -y && apt install procps -y 
 
-RUN apt-get install -y php7.3\
+RUN apt-get install -y php7.4\
 						php-fpm\
 						php-mysql\
 						mariadb-client
@@ -13,7 +13,7 @@ RUN apt-get install -y unzip && cd /var/www && unzip latest.zip && rm latest.zip
 
 RUN	chown -R root:root /var/www/wordpress
 
-COPY ./conf/php.conf /etc/php/7.3/fpm/pool.d/www.conf
+COPY ./conf/php.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 

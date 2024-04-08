@@ -1,8 +1,4 @@
-set -a
-source .env
-set +a
-service mysql start
-
+service mariadb start
 
 echo "-1 check if databse exist"
 mysql -uroot -p$SQL_ROOT_PASSWORD -e "use \`${SQL_DATABASE}\`;"
@@ -11,7 +7,6 @@ if [[ $result -eq 0 ]]
 
 then
 	echo "-2 databse exist already"
-	mysql -uroot -p$SQL_ROOT_PASSWORD -e "SHOW DATABASES;"
 	echo "-3 shut down"
 	mysqladmin -uroot -p$SQL_ROOT_PASSWORD shutdown
 	echo "-4 exit bash and start mysql in safe mode with PID 1"
@@ -31,13 +26,11 @@ else
 	mysql -uroot -p$SQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';"
 	sleep 1
 	echo "-6 refresh grant table"
-	mysql -uroot -p$SQL_ROOT_PASSWORD -e "SHOW DATABASES;"
 	mysql -uroot -p$SQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 	sleep 1
-	mysql -uroot -p$SQL_ROOT_PASSWORD -e "SHOW DATABASES;"
 	echo "-7 shut down"
 	mysqladmin -uroot -p$SQL_ROOT_PASSWORD shutdown
 	sleep 1
 	echo "-8 exit bash and start mysql in safe mode with PID 1"
-	exec mysqld_safe
+	exec mariadbd-safe
 fi

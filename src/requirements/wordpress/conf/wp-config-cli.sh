@@ -1,6 +1,4 @@
 sleep 12
-set -a
-set +a
 echo "--------"
 cd var/
 
@@ -19,7 +17,8 @@ wp core install --allow-root \
                 --admin_email=info@example.com \
                 --path='/var/www/wordpress'
 echo "--------"
-wp user create --allow-root $WP_USER2 $WP_USER2@example.com \
+wp user create --allow-root $WP_USER $WP_USER@example.com \
+                    --user_pass=$WP_PW \
 					--role=author \
                     --path='/var/www/wordpress'
 echo "--------"
@@ -27,4 +26,9 @@ if [ ! -d /run/php ]; then
     mkdir ./run/php
 fi
 
-/usr/sbin/php-fpm7.3 -F
+/usr/sbin/php-fpm7.4 -F
+
+ls -l
+cd usr/sbin/
+
+ls -l
