@@ -55,14 +55,14 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/jelly/data/wordpress' # Adjust this path accordingly
+      device: '/home/${USER}/data/wordpress' # Adjust this path accordingly
 
   mariadb:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/jelly/data/mariadb' # Adjust this path accordingly
+      device: '/home/${USER}/data/mariadb' # Adjust this path accordingly
 
 networks:
   inception:

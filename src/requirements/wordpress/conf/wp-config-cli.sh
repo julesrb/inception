@@ -19,7 +19,7 @@ wp core install --allow-root \
 echo "--------"
 wp user create --allow-root $WP_USER $WP_USER@example.com \
                     --user_pass=$WP_PW \
-					--role=author \
+					--role=subscriber \
                     --path='/var/www/wordpress'
 echo "--------"
 if [ ! -d /run/php ]; then
@@ -27,8 +27,3 @@ if [ ! -d /run/php ]; then
 fi
 
 /usr/sbin/php-fpm7.4 -F
-
-ls -l
-cd usr/sbin/
-
-ls -l

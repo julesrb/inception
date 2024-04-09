@@ -12,29 +12,32 @@ OBJ_DIREC := build/
 
 # -----------\ Rules \-------------------------------------------------------- #
 
-.DEFAULT_GOAL := all
-.DELETE_ON_ERROR:
-
 all: $(NAME)
 
 $(NAME):	
-	mkdir /home/jelly/data/mariadb
-	chmod 777 /home/jelly/data/mariadb
-	mkdir /home/jelly/data/wordpress
-	chmod 777 /home/jelly/data/wordpress
+	mkdir /home/${USER}/data/mariadb
+	mkdir /home/${USER}/data/wordpress
 	cd src
-	docker compose up --build
+	docker compose -f ./src/docker-compose.yml up --build
 	@echo "Inception is runing."
 
 clean:
 	@echo "fclean"
-	bash ./src/requirements/tools/reset-docker.sh
+	-docker ps -qa | xargs docker stop
+	-docker ps -qa | xargs docker rm
+	-docker image ls -qa | xargs docker rmi -f
+	-docker volume ls -q | xargs docker volume rm
+	-docker network ls -q | xargs
+	-docker network ls -q | xargs docker network rm 2>/dev/null
 
 fclean: clean
-	rm -rf /home/jelly/data/mariadb
-	rm -rf /home/jelly/data/wordpress
+	sudo chmod 777 /home/${USER}/data/mariadb
+	sudo chmod 777 /home/${USER}/data/wordpress
+	sudo rm -rf /home/${USER}/data/mariadb
+	sudo rm -rf /home/${USER}/data/wordpress
+	docker system prune
 
-re: clean all
+re: fclean all
 
 .PHONY: all, clean, fclean, re
 
